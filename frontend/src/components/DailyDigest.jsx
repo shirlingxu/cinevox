@@ -118,6 +118,21 @@ export default function DailyDigest() {
         <span className="digest-date">{digest.date}</span>
       </div>
 
+      {/* Video Teaser */}
+      {digest.video_url && (
+        <div className="digest-video">
+          <video
+            className="digest-video-player"
+            src={digest.video_url}
+            controls
+            muted
+            autoPlay
+            loop
+            playsInline
+          />
+        </div>
+      )}
+
       {/* Player */}
       <div className="digest-player">
         <div className="digest-player-top">
