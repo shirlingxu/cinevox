@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+httpx
+praw
+google-genai
+gtts
+pydub
+audioop-lts
+pydantic
+python-dotenv
+hypothesis
+pytest
