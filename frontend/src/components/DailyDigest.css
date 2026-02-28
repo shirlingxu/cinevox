@@ -293,16 +293,4 @@
   50% { opacity: 0.3; }
 }
 
-/* Video Teaser */
-.digest-video {
-  padding: 0;
-  border-bottom: 1px solid var(--border);
-}
 
-.digest-video-player {
-  width: 100%;
-  display: block;
-  max-height: 360px;
-  object-fit: cover;
-  background: #000;
-}

@@ -7,7 +7,6 @@ audio serving, episode history, and genre listing.
 import asyncio
 import json
 import logging
-from datetime import datetime
 from pathlib import Path
 
 from fastapi import BackgroundTasks, FastAPI, HTTPException
@@ -329,27 +328,10 @@ async def get_digest():
     """Return today's daily film digest (cached per day, regenerates daily)."""
     try:
         result = await get_daily_digest()
-        # Add video URL if a teaser was generated
-        if result.get("video_path") and Path(result["video_path"]).exists():
-            result["video_url"] = "/api/digest-video"
-        else:
-            result["video_url"] = None
-        # Don't send the file path to the client
-        result.pop("video_path", None)
         return result
     except Exception as exc:
         logger.error("Digest generation failed: %s", exc)
         raise HTTPException(500, f"Digest generation failed: {exc}")
-
-
-@app.get("/api/digest-video")
-async def get_digest_video():
-    """Serve the daily digest video teaser."""
-    date_key = datetime.now().strftime("%Y-%m-%d")
-    video_path = Path("data/digest") / f"teaser_{date_key}.mp4"
-    if video_path.exists():
-        return FileResponse(str(video_path), media_type="video/mp4")
-    raise HTTPException(404, "No video teaser available for today")
 
 
 # --- Serve React frontend ---

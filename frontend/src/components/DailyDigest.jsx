@@ -70,7 +70,7 @@ export default function DailyDigest() {
     return `${m}:${s.toString().padStart(2, '0')}`;
   }
 
-  // Split script into sentences for live transcript
+  // Split script into sentences for transcript
   const sentences = digest?.script?.split(/(?<=[.!?])\s+/) || [];
   const activeSentenceIndex = duration > 0
     ? Math.min(Math.floor((currentTime / duration) * sentences.length), sentences.length - 1)
@@ -80,7 +80,7 @@ export default function DailyDigest() {
     return (
       <div className="digest-section">
         <div className="digest-header">
-          <span className="digest-badge">Live</span>
+          <span className="digest-badge">Trending</span>
           <h2 className="digest-title">CineVox Daily</h2>
         </div>
         <div className="digest-loading">
@@ -95,7 +95,7 @@ export default function DailyDigest() {
     return (
       <div className="digest-section">
         <div className="digest-header">
-          <span className="digest-badge">Live</span>
+          <span className="digest-badge">Trending</span>
           <h2 className="digest-title">CineVox Daily</h2>
         </div>
         <div className="digest-error">
@@ -113,25 +113,10 @@ export default function DailyDigest() {
   return (
     <div className="digest-section">
       <div className="digest-header">
-        <span className="digest-badge">Live</span>
+        <span className="digest-badge">Trending</span>
         <h2 className="digest-title">CineVox Daily</h2>
         <span className="digest-date">{digest.date}</span>
       </div>
-
-      {/* Video Teaser */}
-      {digest.video_url && (
-        <div className="digest-video">
-          <video
-            className="digest-video-player"
-            src={digest.video_url}
-            controls
-            muted
-            autoPlay
-            loop
-            playsInline
-          />
-        </div>
-      )}
 
       {/* Player */}
       <div className="digest-player">
@@ -197,9 +182,9 @@ export default function DailyDigest() {
         )}
       </div>
 
-      {/* Live Transcript */}
+      {/* Transcript */}
       <div className="digest-transcript">
-        <p className="digest-transcript-label">Live Transcript</p>
+        <p className="digest-transcript-label">Transcript</p>
         <div className="digest-transcript-body">
           {sentences.map((sentence, i) => (
             <span
