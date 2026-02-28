@@ -1,0 +1,24 @@
+{
+  "music": [
+    {"file": "music/ambient_neutral.mp3", "genres": ["neutral"], "sentiment": "neutral"},
+    {"file": "music/upbeat_comedy.mp3", "genres": ["comedy", "animation"], "sentiment": "positive"},
+    {"file": "music/tense_horror.mp3", "genres": ["horror", "thriller"], "sentiment": "negative"},
+    {"file": "music/dramatic_action.mp3", "genres": ["action", "sci-fi"], "sentiment": "positive"},
+    {"file": "music/dreamy_romance.mp3", "genres": ["romance", "drama"], "sentiment": "positive"},
+    {"file": "music/somber_drama.mp3", "genres": ["drama"], "sentiment": "negative"},
+    {"file": "music/suspense_thriller.mp3", "genres": ["thriller", "horror"], "sentiment": "negative"},
+    {"file": "music/whimsical_animation.mp3", "genres": ["animation", "comedy"], "sentiment": "positive"},
+    {"file": "music/epic_scifi.mp3", "genres": ["sci-fi", "action"], "sentiment": "positive"},
+    {"file": "music/calm_documentary.mp3", "genres": ["documentary"], "sentiment": "neutral"}
+  ],
+  "sfx": [
+    {"file": "sfx/whoosh_action.mp3", "genres": ["action", "sci-fi"]},
+    {"file": "sfx/creak_horror.mp3", "genres": ["horror", "thriller"]},
+    {"file": "sfx/laugh_comedy.mp3", "genres": ["comedy", "animation"]},
+    {"file": "sfx/swoosh_generic.mp3", "genres": ["neutral", "drama", "romance", "documentary"]}
+  ],
+  "jingles": {
+    "intro": "jingles/intro.mp3",
+    "outro": "jingles/outro.mp3"
+  }
+}

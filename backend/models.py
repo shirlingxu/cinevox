@@ -26,6 +26,7 @@ class PipelineStage(str, Enum):
     SENTIMENT = "sentiment"
     SCRIPT = "script"
     AUDIO = "audio"
+    MIXING = "mixing"
     POST = "post"
     COMPLETE = "complete"
     FAILED = "failed"
@@ -182,3 +183,18 @@ class EpisodeContext(BaseModel):
     recurring_directors: list[str] = []
     recurring_franchises: list[str] = []
     is_first_episode: bool = False
+
+
+# --- Audio Assets ---
+
+
+class AudioAsset(BaseModel):
+    file: str
+    genres: list[str] = []
+    sentiment: str = "neutral"  # "positive", "negative", "neutral"
+
+
+class AssetManifest(BaseModel):
+    music: list[AudioAsset] = []
+    sfx: list[AudioAsset] = []
+    jingles: dict[str, str] = {}  # {"intro": "path", "outro": "path"}

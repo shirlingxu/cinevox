@@ -81,7 +81,7 @@ export default function DailyDigest() {
       <div className="digest-section">
         <div className="digest-header">
           <span className="digest-badge">Live</span>
-          <h2 className="digest-title">Daily Film Digest</h2>
+          <h2 className="digest-title">CineVox Daily</h2>
         </div>
         <div className="digest-loading">
           <span className="digest-spinner" />
@@ -96,7 +96,7 @@ export default function DailyDigest() {
       <div className="digest-section">
         <div className="digest-header">
           <span className="digest-badge">Live</span>
-          <h2 className="digest-title">Daily Film Digest</h2>
+          <h2 className="digest-title">CineVox Daily</h2>
         </div>
         <div className="digest-error">
           <p>{error}</p>
@@ -114,7 +114,7 @@ export default function DailyDigest() {
     <div className="digest-section">
       <div className="digest-header">
         <span className="digest-badge">Live</span>
-        <h2 className="digest-title">Daily Film Digest</h2>
+        <h2 className="digest-title">CineVox Daily</h2>
         <span className="digest-date">{digest.date}</span>
       </div>
 
@@ -139,8 +139,7 @@ export default function DailyDigest() {
             )}
           </button>
           <div className="digest-player-info">
-            <p className="digest-player-label">CineVox Film Digest</p>
-            <p className="digest-player-sub">Powered by Google Search Grounding</p>
+            <p className="digest-player-label">CineVox Daily</p>
           </div>
           <button className="digest-refresh-btn" onClick={fetchDigest} title="Refresh">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">

@@ -76,11 +76,14 @@ async def _generate_digest() -> dict:
         f"and the top 3 breaking news stories in the film industry from the last 24 hours.\n\n"
         f"Summarize them into a cohesive, engaging 2-minute podcast script for film enthusiasts.\n\n"
         f"CRITICAL INSTRUCTIONS:\n"
-        f'1. Start the script EXACTLY with: "This is CineVox Film Digest and today is {today}. '
+        f"1. Alex is the primary narrator who delivers the main content.\n"
+        f"2. Maya adds brief reactions, transitions, or commentary between segments (1-2 short lines).\n"
+        f"3. Format speaker lines as 'Alex: ...' or 'Maya: ...' each on its own line.\n"
+        f'4. Start with Alex: "This is CineVox Daily and today is {today}. '
         f"Here's the latest on what's happening in the film world.\"\n"
-        f"2. For every movie mentioned, provide a quick one-liner description of what the movie is about.\n"
-        f"3. Keep the tone professional and concise.\n"
-        f"4. End with a brief sign-off."
+        f"5. For every movie mentioned, provide a quick one-liner description of what the movie is about.\n"
+        f"6. Keep the tone professional and concise. Alex drives the content, Maya keeps it lively.\n"
+        f"7. End with a brief sign-off from Alex, followed by a short closer from Maya."
     )
 
     try:
@@ -91,7 +94,7 @@ async def _generate_digest() -> dict:
                 tools=[types.Tool(google_search=types.GoogleSearch())],
             ),
         )
-        script = search_response.text or f"This is CineVox Film Digest and today is {today}. Stay tuned for the latest in film."
+        script = search_response.text or f"Alex: This is CineVox Daily and today is {today}. Stay tuned for the latest in film.\nMaya: We'll be right back."
 
         # Extract grounding sources
         sources = []
@@ -107,21 +110,50 @@ async def _generate_digest() -> dict:
                     })
     except Exception as exc:
         logger.error("Search grounding failed: %s", exc)
-        script = f"This is CineVox Film Digest and today is {today}. We're experiencing technical difficulties with our news feed."
+        script = f"Alex: This is CineVox Daily and today is {today}. We're experiencing technical difficulties with our news feed.\nMaya: Hang tight, we'll be back soon."
         sources = []
 
-    # 2. Generate TTS audio
+    # 2. Generate TTS audio with multi-speaker (Alex + Maya)
     audio_base64 = None
     try:
+        alex_scene = (
+            "# AUDIO PROFILE: Alex\n## CineVox Lead Host\n\n### DIRECTOR'S NOTES\n"
+            "Style: Confident, witty film podcast host. Warm baritone energy. "
+            "Think of a knowledgeable friend who genuinely loves movies and gets excited sharing opinions.\n"
+            "Pacing: Conversational and dynamic. Natural breathing pauses.\n"
+            "Accent: Standard American English, casual and approachable.\n"
+        )
+        maya_scene = (
+            "# AUDIO PROFILE: Maya\n## CineVox Co-Host\n\n### DIRECTOR'S NOTES\n"
+            "Style: Thoughtful, analytical co-host with a warm personality. "
+            "Brings sharp observations and occasionally playful sarcasm.\n"
+            "Pacing: Measured but engaging. Natural conversational rhythm.\n"
+            "Accent: Standard American English, bright and clear.\n"
+        )
+        tts_prompt = f"{alex_scene}\n{maya_scene}\n\n#### TRANSCRIPT\n{script}"
+
         tts_response = client.models.generate_content(
             model=TTS_MODEL,
-            contents=f"Say in a professional narrator voice: {script}",
+            contents=tts_prompt,
             config=types.GenerateContentConfig(
                 response_modalities=["AUDIO"],
                 speech_config=types.SpeechConfig(
-                    voice_config=types.VoiceConfig(
-                        prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name="Zephyr"),
-                    ),
+                    multi_speaker_voice_config=types.MultiSpeakerVoiceConfig(
+                        speaker_voice_configs=[
+                            types.SpeakerVoiceConfig(
+                                speaker="Alex",
+                                voice_config=types.VoiceConfig(
+                                    prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name="Orus"),
+                                ),
+                            ),
+                            types.SpeakerVoiceConfig(
+                                speaker="Maya",
+                                voice_config=types.VoiceConfig(
+                                    prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name="Aoede"),
+                                ),
+                            ),
+                        ]
+                    )
                 ),
             ),
         )

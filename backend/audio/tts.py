@@ -170,16 +170,14 @@ Accent: Standard American English.
         )
         return response.candidates[0].content.parts[0].inline_data.data
 
-    def generate(self, script: NarrationScript, podcast_id: str | None = None, max_retries: int = 2) -> str:
-        """Convert script to MP3 using Gemini TTS. Returns the file path."""
+    def generate_segment(self, script: NarrationScript, max_retries: int = 2) -> AudioSegment:
+        """Convert script to AudioSegment using Gemini TTS. Returns the raw AudioSegment."""
         cleaned = self._clean_script(script.text)
         if not cleaned:
             raise ValueError("Script produced no speakable content")
 
         multi_speaker = self._is_multi_speaker(cleaned)
         chunks = self._chunk_script(cleaned)
-        pid = podcast_id or str(uuid.uuid4())[:8]
-        output_path = self._output_dir / f"{pid}.mp3"
 
         for attempt in range(max_retries + 1):
             try:
@@ -199,15 +197,11 @@ Accent: Standard American English.
                     segment = self._pcm_to_audio_segment(pcm_data)
                     combined += segment
 
-                # Export final MP3
-                combined.export(str(output_path), format="mp3")
-                duration_seconds = len(combined) / 1000.0
-
                 logger.info(
-                    "Generated audio: %s (%.1fs, %d chunks)",
-                    output_path, duration_seconds, len(chunks),
+                    "Generated TTS segment: %.1fs, %d chunks",
+                    len(combined) / 1000.0, len(chunks),
                 )
-                return str(output_path)
+                return combined
 
             except Exception as exc:
                 logger.error(
@@ -218,3 +212,19 @@ Accent: Standard American English.
                     raise
 
         raise RuntimeError("AudioGenerator exhausted retries")
+
+    def generate(self, script: NarrationScript, podcast_id: str | None = None, max_retries: int = 2) -> str:
+        """Convert script to MP3 using Gemini TTS. Returns the file path."""
+        combined = self.generate_segment(script, max_retries)
+
+        pid = podcast_id or str(uuid.uuid4())[:8]
+        output_path = self._output_dir / f"{pid}.mp3"
+
+        combined.export(str(output_path), format="mp3")
+        duration_seconds = len(combined) / 1000.0
+
+        logger.info(
+            "Generated audio: %s (%.1fs)",
+            output_path, duration_seconds,
+        )
+        return str(output_path)

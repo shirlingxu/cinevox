@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { getStatus } from '../api';
 import './ProgressIndicator.css';
 
-const STAGES = ['metadata', 'reviews', 'summarization', 'sentiment', 'script', 'audio', 'post', 'complete'];
+const STAGES = ['metadata', 'reviews', 'summarization', 'sentiment', 'script', 'audio', 'mixing', 'post', 'complete'];
 
 const STAGE_LABELS = {
   metadata: 'Fetching movie data',
@@ -11,6 +11,7 @@ const STAGE_LABELS = {
   sentiment: 'Analyzing sentiment',
   script: 'Writing narration',
   audio: 'Generating audio',
+  mixing: 'Mixing background music',
   post: 'Creating cover art',
   complete: 'Broadcast ready',
 };

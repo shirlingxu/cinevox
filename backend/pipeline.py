@@ -10,6 +10,7 @@ import logging
 import time
 import uuid
 from datetime import datetime
+from pathlib import Path
 
 from backend.clients.omdb_client import OMDbClient
 from backend.clients.reddit_client import RedditClient
@@ -18,6 +19,8 @@ from backend.ai.summarizer import Summarizer
 from backend.ai.sentiment import SentimentAnalyzer
 from backend.ai.script_generator import ScriptGenerator
 from backend.audio.tts import AudioGenerator
+from backend.audio.selector import AudioSelector
+from backend.audio.mixer import AudioMixer
 from backend.ai.post_generator import generate_post_text, generate_cover_image
 from backend.memory.episode_memory import EpisodeMemory
 from backend.models import (
@@ -105,6 +108,8 @@ class PipelineOrchestrator:
         self._sentiment = SentimentAnalyzer()
         self._script_gen = ScriptGenerator()
         self._audio_gen = AudioGenerator()
+        self._selector = AudioSelector()
+        self._mixer = AudioMixer(self._selector)
         self._memory = EpisodeMemory()
 
         # Status tracking — keyed by podcast_id
@@ -308,10 +313,45 @@ class PipelineOrchestrator:
             stage_timings["script"] = time.time() - t0
             self._update_status(podcast_id, PipelineStage.AUDIO, 75)
 
-            # --- 7. Audio generation ---
+            # --- 7. Audio generation (TTS) ---
             t0 = time.time()
-            audio_path = self._generate_audio(script, podcast_id)
-            stage_timings["audio"] = time.time() - t0
+            speech_segment = self._audio_gen.generate_segment(script)
+            stage_timings["tts"] = time.time() - t0
+            self._update_status(podcast_id, PipelineStage.MIXING, 80)
+
+            # --- 7b. Background audio mixing ---
+            t0 = time.time()
+            try:
+                genres_per_movie = {r.title: r.genres for r in records}
+                sentiments_per_movie = {
+                    s.movie_title: s.overall_sentiment.value for s in sentiments
+                }
+                mixed_segment = await self._mixer.mix(
+                    speech_segment,
+                    script.movie_segments,
+                    genres_per_movie,
+                    sentiments_per_movie,
+                )
+                # Export final mixed MP3
+                output_path = Path("data/episodes") / f"{podcast_id}.mp3"
+                output_path.parent.mkdir(parents=True, exist_ok=True)
+                mixed_segment.export(str(output_path), format="mp3")
+                audio_path = str(output_path)
+                logger.info(
+                    "Mixed audio exported: %s (%.1fs)",
+                    audio_path,
+                    len(mixed_segment) / 1000.0,
+                )
+            except Exception as exc:
+                logger.warning(
+                    "Mixing failed, falling back to speech-only: %s", exc
+                )
+                # Fallback: export speech without mixing
+                output_path = Path("data/episodes") / f"{podcast_id}.mp3"
+                output_path.parent.mkdir(parents=True, exist_ok=True)
+                speech_segment.export(str(output_path), format="mp3")
+                audio_path = str(output_path)
+            stage_timings["mixing"] = time.time() - t0
 
             # --- 8. Build result ---
             movies_covered = [s.movie_title for s in summaries]
