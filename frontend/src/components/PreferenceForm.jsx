@@ -96,7 +96,7 @@ export default function PreferenceForm({ onGenerate }) {
 
   return (
     <form className="preference-form" onSubmit={handleSubmit}>
-      <p className="form-section-label">New Broadcast</p>
+      <p className="form-section-label">New Podcast</p>
       <h2 className="form-heading">Generate Episode</h2>
 
       <div className="form-group">

@@ -47,7 +47,7 @@ export default function PodcastPlayer({ podcastId, metadata = {}, onNewPodcast }
   return (
     <div className="podcast-player">
       <div className="player-banner">
-        <span className="player-banner-label">Broadcast Ready</span>
+        <span className="player-banner-label">Podcast Ready</span>
         <span className="player-banner-id">{podcastId}</span>
       </div>
 

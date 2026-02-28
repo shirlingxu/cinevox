@@ -13,7 +13,7 @@ const STAGE_LABELS = {
   audio: 'Generating audio',
   mixing: 'Mixing background music',
   post: 'Creating cover art',
-  complete: 'Broadcast ready',
+  complete: 'Podcast ready',
 };
 
 function stageProgress(stage) {
@@ -81,7 +81,7 @@ export default function ProgressIndicator({ podcastId, onComplete, onRetry }) {
       </div>
 
       <div className="progress-body">
-        <h2 className="progress-heading">Building Your Broadcast</h2>
+        <h2 className="progress-heading">Building Your Podcast</h2>
 
         <div className="ticker" aria-hidden="true">
           {[...Array(9)].map((_, i) => <div key={i} className="ticker-bar" />)}

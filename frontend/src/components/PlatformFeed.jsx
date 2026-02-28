@@ -55,7 +55,7 @@ export default function PlatformFeed() {
           </div>
 
           <div className="feed-grid">
-        {feed.map((ep) => (
+        {feed.filter((ep) => ep.image_url).map((ep) => (
           <article key={ep.podcast_id} className="feed-card">
             {ep.image_url ? (
               <div className="feed-card-image-wrap">
